@@ -22,6 +22,7 @@ fetch("destinos.json").then((response) => response.json())
         destinos.push(new Destino(destino.ciudadDestino,destino.paisDestino,
             destino.precio,destino.imgURL))
     });
+    popularListaPaises(destinos)
     let btnDropPrecio = document.getElementById("menuPrecio");
     let btnOrderByPriceAsc = document.getElementById("orderBy-PriceAsc");
     btnOrderByPriceAsc.addEventListener("click", () => ordenarPor("precioAsc", destinos));
@@ -38,6 +39,27 @@ fetch("destinos.json").then((response) => response.json())
     popularCarritoConSesion()
     mostrarDestinos(destinos)
 })
+
+function popularListaPaises(destinos){
+    let dropPaises = document.getElementById("dropPaises")
+    let listaPaises = []
+    destinos.forEach(el => {if(!listaPaises.includes(el.paisDestino)) listaPaises.push(el.paisDestino)})
+    let listaPaisesOrdenado = listaPaises.sort((a, b) => a.localeCompare(b))
+    let btnPais = document.createElement("button")
+        btnPais.setAttribute("type", "button")
+        btnPais.classList.add("dropdown-item")
+        btnPais.innerText = "limpiar filtro"
+        btnPais.addEventListener("click", () => filtrarPorPais("Default", destinos))
+        dropPaises.append(btnPais)
+    listaPaisesOrdenado.forEach(pais => {
+        let btnPais = document.createElement("button")
+        btnPais.setAttribute("type", "button")
+        btnPais.classList.add("dropdown-item")
+        btnPais.innerText = pais
+        btnPais.addEventListener("click", () => filtrarPorPais(pais, destinos))
+        dropPaises.append(btnPais)
+    })
+}
 
 function popularCarritoConSesion(){
     carrito = obtenerCarritoDeSession()
@@ -145,6 +167,16 @@ function ordenarPor(ordenarPor, destinos){
             mostrarDestinos(ordenadoPorCiudad)
             break;
     }
+}
+
+function filtrarPorPais(filtrarPor, destinos){
+    let section = document.getElementById("grid-destinos")
+    section.innerHTML = ""
+    if(filtrarPor == "Default"){
+        return mostrarDestinos(destinos)
+    } 
+    let destinosFiltrado = destinos.filter(el => {return el.paisDestino == filtrarPor})
+    mostrarDestinos(destinosFiltrado)
 }
 
 function agregarEstadoActive(elementoActive){
