@@ -42,6 +42,7 @@ fetch("destinos.json").then((response) => response.json())
 
 function popularListaPaises(destinos){
     let dropPaises = document.getElementById("dropPaises")
+    let menuPaises = document.getElementById("menuPaises")
     let listaPaises = []
     destinos.forEach(el => {if(!listaPaises.includes(el.paisDestino)) listaPaises.push(el.paisDestino)})
     let listaPaisesOrdenado = listaPaises.sort((a, b) => a.localeCompare(b))
@@ -49,14 +50,14 @@ function popularListaPaises(destinos){
         btnPais.setAttribute("type", "button")
         btnPais.classList.add("dropdown-item")
         btnPais.innerText = "limpiar filtro"
-        btnPais.addEventListener("click", () => filtrarPorPais("Default", destinos))
+        btnPais.addEventListener("click", () => filtrarPorPais("Default", destinos, menuPaises))
         dropPaises.append(btnPais)
     listaPaisesOrdenado.forEach(pais => {
         let btnPais = document.createElement("button")
         btnPais.setAttribute("type", "button")
         btnPais.classList.add("dropdown-item")
         btnPais.innerText = pais
-        btnPais.addEventListener("click", () => filtrarPorPais(pais, destinos))
+        btnPais.addEventListener("click", () => filtrarPorPais(pais, destinos, menuPaises))
         dropPaises.append(btnPais)
     })
 }
@@ -169,13 +170,15 @@ function ordenarPor(ordenarPor, destinos){
     }
 }
 
-function filtrarPorPais(filtrarPor, destinos){
+function filtrarPorPais(filtrarPor, destinos, menuPaises){
     let section = document.getElementById("grid-destinos")
     section.innerHTML = ""
     if(filtrarPor == "Default"){
+        menuPaises.innerText = "Pais"
         return mostrarDestinos(destinos)
     } 
     let destinosFiltrado = destinos.filter(el => {return el.paisDestino == filtrarPor})
+    menuPaises.innerText = filtrarPor
     mostrarDestinos(destinosFiltrado)
 }
 
